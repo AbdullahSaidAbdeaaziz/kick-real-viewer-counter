@@ -1,21 +1,22 @@
 {
   "manifest_version": 3,
-  "name": "Kick Real Viewer Counter",
-  "version": "1.1",
-  "description": "Enhanced real viewer counter for Kick.com streams based on chat activity.",
-  "permissions": ["scripting", "activeTab"],
+  "name": "Kick Real Chat Viewers",
+  "version": "1.0",
+  "description": "Counts unique chatters and compares to official Kick.com viewers.",
+  "permissions": ["tabs", "scripting"],
   "host_permissions": ["https://kick.com/*"],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": "icon.png"
+  },
   "content_scripts": [
     {
       "matches": ["https://kick.com/*"],
-      "js": ["content.js"]
+      "js": ["content.js"],
+      "run_at": "document_idle"
     }
   ],
-  "action": {
-    "default_popup": "popup.html",
-    "default_icon": {
-      "16": "icon.png",
-      "48": "icon.png"
-    }
+  "icons": {
+    "48": "icon.png"
   }
 }
