@@ -76,7 +76,7 @@ function updateOverlay(count) {
     const percentage = ((count / official) * 100).toFixed(1);
     ratio = ` / 👁 ${official} (${percentage}% Active)`;
   }
-  overlay.textContent = `💬 Real Chat Viewers: ${count}${ratio}`;
+  overlay.textContent = `💬 Viewers: ${count}${ratio}`;
 }
 
 function resetCounter() {
