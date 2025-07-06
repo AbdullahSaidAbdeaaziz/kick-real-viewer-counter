@@ -1,18 +1,70 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Real Chat Viewers</title>
   <style>
-    body { font-family: sans-serif; padding: 10px; }
+    body {
+      margin: 0;
+      padding: 15px;
+      background: #121212;
+      color: #fff;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      width: 250px;
+    }
+
+    h1 {
+      font-size: 18px;
+      margin-bottom: 10px;
+      color: #00ff00;
+    }
+
+    .stat {
+      margin-bottom: 10px;
+      font-size: 14px;
+    }
+
+    .stat span {
+      font-weight: bold;
+      color: #00ff00;
+    }
+
+    button {
+      width: 100%;
+      padding: 8px;
+      background-color: #1f1f1f;
+      border: 1px solid #444;
+      color: #fff;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: all 0.2s ease-in-out;
+    }
+
+    button:hover {
+      background-color: #00ff00;
+      color: #000;
+    }
+
+    .footer {
+      margin-top: 12px;
+      font-size: 11px;
+      color: #aaa;
+      text-align: center;
+    }
   </style>
 </head>
 <body>
-  <h4>Kick Real Viewer Counter</h4>
-  <!-- <ul>
-    <li>✅ Live chat-based viewer count</li>
-    <li>🔁 Auto resets when switching streams</li>
-    <li>🎛️ Includes reset button</li>
-    <li>🕒 Auto-hide overlay after inactivity</li>
-  </ul> -->
-  <p>Join a stream on Kick.com to see it work!</p>
+  <h1>💬 Real Chat Viewers</h1>
+
+  <div class="stat">Chatting Users: <span id="realCount">0</span></div>
+  <div class="stat">Official Viewers: <span id="officialCount">—</span></div>
+  <div class="stat">Activity Ratio: <span id="ratio">—</span></div>
+
+  <button id="resetBtn">🔄 Reset Counter</button>
+
+  <div class="footer">kick.com viewer analyzer</div>
+
+  <script src="popup.js"></script>
 </body>
 </html>
