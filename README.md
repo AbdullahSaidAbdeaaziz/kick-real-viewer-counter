@@ -22,7 +22,7 @@ Track the **real number of unique chatters** in a Kick live stream in real time,
    - Clone this repo or extract the `.zip` if downloaded.
 
 2. **Load into (Chrome, Brave, Edge, Firefox):**
-   - Go to `(chrome|edge|firefox|edge)://extensions/` (depend on your browser)
+   - Go to `(chrome|brave|firefox|edge)://extensions/` (depend on your browser)
    - Enable **Developer Mode** (top right)
    - Click **Load unpacked**
    - Select the folder (folder of project) that contains:
