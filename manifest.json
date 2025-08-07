@@ -1,9 +1,9 @@
 {
   "manifest_version": 3,
   "name": "Kick Real Chat Viewers",
-  "version": "1.0",
+  "version": "1.1",
   "description": "Counts unique chatters and compares to official Kick.com viewers.",
-  "permissions": ["tabs", "scripting"],
+  "permissions": ["tabs", "scripting", "activeTab"],
   "host_permissions": ["https://kick.com/*"],
   "action": {
     "default_popup": "popup.html",
