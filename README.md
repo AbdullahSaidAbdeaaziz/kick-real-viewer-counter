@@ -1,6 +1,13 @@
-# 🔍 Kick Real Chat Viewers - (Chrome, Brave, Edge, Firefox) Extension
+# 🔍 Kick Real Chat Viewers - Universal Browser Extension
 
 Track the **real number of unique chatters** in a Kick live stream in real time, and compare it to the official viewer count. Perfect for spotting active chats, lurking ratios, or engagement drops!
+
+## 🌐 **Cross-Browser Support**
+- ✅ **Chrome** 
+- ✅ **Microsoft Edge**
+- ✅ **Brave Browser**
+- ✅ **Opera**
+- ✅ **Firefox**
 
 ![Screenshot](icon.png)
 
@@ -18,23 +25,14 @@ Track the **real number of unique chatters** in a Kick live stream in real time,
 
 ## 🛠️ Installation
 
-1. **Download the Extension:**
-   - Clone this repo or extract the `.zip` if downloaded.
+### **Quick Setup** 
+See detailed instructions in [BROWSER-SUPPORT.md](BROWSER-SUPPORT.md)
 
-2. **Load into (Chrome, Brave, Edge, Firefox):**
-   - Go to `(chrome|edge|firefox|edge)://extensions/` (depend on your browser)
-   - Enable **Developer Mode** (top right)
-   - Click **Load unpacked**
-   - Select the folder (folder of project) that contains:
-     ```
-     manifest.json
-     content.js
-     icon.png
-     ```
+**Chrome/Edge/Brave/Opera:**
+1. Extract extension → Go to `chrome://extensions/` → Enable Developer Mode → Load unpacked
 
-3. **Done!**
-   - Visit any **Kick.com live stream**
-   - You'll see the overlay in the top-right (or wherever you drag it)
+**Firefox:**  
+1. Extract extension → Rename `manifest-firefox.json` to `manifest.json` → Go to `about:debugging` → Load Temporary Add-on
 
 ---
 

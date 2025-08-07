@@ -1,4 +1,16 @@
-// content.js
+// content.js - Cross-browser compatible
+// Browser API polyfill for cross-browser compatibility
+const browserAPI = (() => {
+  if (typeof browser !== 'undefined' && browser.runtime) {
+    return browser; // Firefox
+  } else if (typeof chrome !== 'undefined' && chrome.runtime) {
+    return chrome; // Chrome, Edge, Brave, Opera
+  } else {
+    console.error('No browser extension API found');
+    return null;
+  }
+})();
+
 let uniqueUsers = new Set();
 let currentStream = window.location.pathname;
 let overlay;
@@ -219,4 +231,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     log('Error handling message:', error);
     sendResponse({ error: error.message });
   }
+  
+  // Return true for async response (required for proper cross-browser support)
+  return true;
 });

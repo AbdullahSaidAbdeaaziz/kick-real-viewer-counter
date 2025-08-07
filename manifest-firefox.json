@@ -1,18 +1,16 @@
 {
-  "manifest_version": 3,
+  "manifest_version": 2,
   "name": "Kick Real Chat Viewers",
   "version": "1.1",
   "description": "Counts unique chatters and compares to official Kick.com viewers.",
-  "permissions": ["tabs", "scripting", "activeTab"],
-  "host_permissions": ["https://kick.com/*"],
-  "action": {
+  "permissions": [
+    "tabs",
+    "activeTab",
+    "https://kick.com/*"
+  ],
+  "browser_action": {
     "default_popup": "popup.html",
-    "default_icon": {
-      "16": "icon.png",
-      "32": "icon.png",
-      "48": "icon.png",
-      "128": "icon.png"
-    }
+    "default_icon": "icon.png"
   },
   "content_scripts": [
     {
@@ -23,8 +21,14 @@
   ],
   "icons": {
     "16": "icon.png",
-    "32": "icon.png",
+    "32": "icon.png", 
     "48": "icon.png",
     "128": "icon.png"
+  },
+  "applications": {
+    "gecko": {
+      "id": "kick-real-viewer-counter@abdullahsaid.dev",
+      "strict_min_version": "57.0"
+    }
   }
 }
