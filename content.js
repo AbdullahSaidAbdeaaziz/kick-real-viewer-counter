@@ -17,9 +17,79 @@ let overlay;
 let chatObserver;
 let debugMode = false; // Set to true for debugging
 
+// Storage key prefix for stream data
+const STORAGE_PREFIX = 'kick_stream_users_';
+const STORAGE_SETTINGS = 'kick_settings';
+
 function log(message, ...args) {
   if (debugMode) {
     console.log('[Kick Real Viewer Counter]', message, ...args);
+  }
+}
+
+// Storage functions for persistent stream data
+async function saveStreamData(streamPath, usersSet) {
+  if (!browserAPI || !browserAPI.storage) return;
+  
+  try {
+    const storageKey = STORAGE_PREFIX + streamPath.replace(/[^a-zA-Z0-9]/g, '_');
+    const usersArray = Array.from(usersSet);
+    const data = {
+      users: usersArray,
+      count: usersArray.length,
+      lastVisit: Date.now(),
+      streamPath: streamPath
+    };
+    
+    await browserAPI.storage.local.set({ [storageKey]: data });
+    log(`Saved ${usersArray.length} users for stream: ${streamPath}`);
+  } catch (error) {
+    log('Error saving stream data:', error);
+  }
+}
+
+async function loadStreamData(streamPath) {
+  if (!browserAPI || !browserAPI.storage) return null;
+  
+  try {
+    const storageKey = STORAGE_PREFIX + streamPath.replace(/[^a-zA-Z0-9]/g, '_');
+    const result = await browserAPI.storage.local.get([storageKey]);
+    
+    if (result[storageKey]) {
+      const data = result[storageKey];
+      log(`Loaded ${data.count} users for stream: ${streamPath}`);
+      return data;
+    }
+  } catch (error) {
+    log('Error loading stream data:', error);
+  }
+  
+  return null;
+}
+
+async function clearOldStreamData() {
+  if (!browserAPI || !browserAPI.storage) return;
+  
+  try {
+    const result = await browserAPI.storage.local.get(null);
+    const keys = Object.keys(result);
+    const streamKeys = keys.filter(key => key.startsWith(STORAGE_PREFIX));
+    const oneWeekAgo = Date.now() - (7 * 24 * 60 * 60 * 1000); // 1 week
+    
+    const keysToRemove = [];
+    for (const key of streamKeys) {
+      const data = result[key];
+      if (data && data.lastVisit < oneWeekAgo) {
+        keysToRemove.push(key);
+      }
+    }
+    
+    if (keysToRemove.length > 0) {
+      await browserAPI.storage.local.remove(keysToRemove);
+      log(`Cleaned up ${keysToRemove.length} old stream data entries`);
+    }
+  } catch (error) {
+    log('Error cleaning old stream data:', error);
   }
 }
 
@@ -108,7 +178,7 @@ function getOfficialViewerCount() {
   return isNaN(num) ? null : num;
 }
 
-function updateOverlay(count) {
+function updateOverlay(count, isRestored = false) {
   if (!overlay) createOverlay();
   const official = getOfficialViewerCount();
   let ratio = '';
@@ -116,12 +186,40 @@ function updateOverlay(count) {
     const percentage = ((count / official) * 100).toFixed(1);
     ratio = ` / 👁 ${official} (${percentage}% Active)`;
   }
-  overlay.textContent = `💬 ${count}${ratio}`;
+  
+  // Add indicator if data was restored
+  const restoredIndicator = isRestored ? ' 🔄' : '';
+  overlay.textContent = `💬 ${count}${ratio}${restoredIndicator}`;
+  
+  // Change color temporarily if restored
+  if (isRestored) {
+    overlay.style.color = "#ffff00"; // Yellow for restored data
+    setTimeout(() => {
+      overlay.style.color = "#00ff00"; // Back to green
+    }, 3000);
+  }
 }
 
-function resetCounter() {
+async function resetCounter() {
+  // Save current data before resetting (if we have users and a valid stream)
+  if (uniqueUsers.size > 0 && currentStream && isLiveStreamPath(currentStream)) {
+    await saveStreamData(currentStream, uniqueUsers);
+  }
+  
   uniqueUsers.clear();
   updateOverlay(0);
+}
+
+async function loadPreviousStreamData(streamPath) {
+  const savedData = await loadStreamData(streamPath);
+  if (savedData && savedData.users) {
+    // Restore previous users
+    uniqueUsers = new Set(savedData.users);
+    log(`Restored ${uniqueUsers.size} users from previous visit to ${streamPath}`);
+    updateOverlay(uniqueUsers.size, true); // Show restored indicator
+    return true;
+  }
+  return false;
 }
 
 function scanMessages() {
@@ -194,21 +292,57 @@ function isLiveStreamPath(path) {
   return /^\/[^\/]+$/.test(path) && path.length > 1;
 }
 
-function resetOnStreamChange() {
-  setInterval(() => {
+async function handleStreamChange() {
+  setInterval(async () => {
     const newPath = window.location.pathname;
     if (newPath !== currentStream && isLiveStreamPath(newPath)) {
+      log(`Stream changed from ${currentStream} to ${newPath}`);
+      
+      // Save current stream data before switching
+      if (uniqueUsers.size > 0 && currentStream && isLiveStreamPath(currentStream)) {
+        await saveStreamData(currentStream, uniqueUsers);
+        log(`Saved ${uniqueUsers.size} users for ${currentStream}`);
+      }
+      
+      // Update current stream
       currentStream = newPath;
-      resetCounter();
+      
+      // Try to load previous data for the new stream
+      const hadPreviousData = await loadPreviousStreamData(newPath);
+      
+      if (!hadPreviousData) {
+        // No previous data, start fresh
+        uniqueUsers.clear();
+        updateOverlay(0);
+        log(`Starting fresh count for new stream: ${newPath}`);
+      }
+      
+      // Start observing the new stream
       startObserver();
     }
   }, 1000);
 }
 
-window.addEventListener("load", () => {
+// Initialize stream data loading
+async function initializeStreamData() {
+  log(`Initializing stream data for: ${currentStream}`);
+  
+  if (isLiveStreamPath(currentStream)) {
+    const hadPreviousData = await loadPreviousStreamData(currentStream);
+    if (!hadPreviousData) {
+      log(`No previous data found for ${currentStream}, starting fresh`);
+    }
+  }
+  
+  // Clean up old data periodically
+  clearOldStreamData();
+}
+
+window.addEventListener("load", async () => {
   createOverlay();
+  await initializeStreamData();
   startObserver();
-  resetOnStreamChange();
+  handleStreamChange();
   setInterval(() => updateOverlay(uniqueUsers.size), 5000);
 });
 
@@ -218,14 +352,38 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       const stats = {
         real: uniqueUsers.size,
         official: getOfficialViewerCount(),
+        streamPath: currentStream,
+        hasPreviousData: uniqueUsers.size > 0
       };
       log('Sending stats:', stats);
       sendResponse(stats);
     }
     if (request.type === "RESET_VIEW_COUNTER") {
-      log('Resetting counter');
+      log('Resetting counter (manual reset)');
       resetCounter();
       sendResponse({ success: true });
+    }
+    if (request.type === "SAVE_CURRENT_DATA") {
+      log('Manually saving current data');
+      if (uniqueUsers.size > 0 && currentStream && isLiveStreamPath(currentStream)) {
+        saveStreamData(currentStream, uniqueUsers).then(() => {
+          sendResponse({ success: true, saved: uniqueUsers.size });
+        });
+      } else {
+        sendResponse({ success: false, message: "No data to save" });
+      }
+      return true; // Keep message channel open for async response
+    }
+    if (request.type === "CLEAR_STREAM_DATA") {
+      log('Clearing all stored stream data');
+      if (browserAPI && browserAPI.storage) {
+        browserAPI.storage.local.clear().then(() => {
+          sendResponse({ success: true });
+        });
+      } else {
+        sendResponse({ success: false });
+      }
+      return true;
     }
   } catch (error) {
     log('Error handling message:', error);

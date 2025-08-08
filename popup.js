@@ -3,8 +3,11 @@ document.addEventListener("DOMContentLoaded", () => {
   const realCountEl = document.getElementById("realCount");
   const officialCountEl = document.getElementById("officialCount");
   const ratioEl = document.getElementById("ratio");
+  const streamPathEl = document.getElementById("streamPath");
   const resetBtn = document.getElementById("resetBtn");
   const refreshBtn = document.getElementById("refreshBtn");
+  const saveBtn = document.getElementById("saveBtn");
+  const clearBtn = document.getElementById("clearBtn");
 
   // Browser API polyfill for cross-browser compatibility
   const browserAPI = (() => {
@@ -56,11 +59,28 @@ document.addEventListener("DOMContentLoaded", () => {
         
         realCountEl.textContent = response.real ?? "0";
         officialCountEl.textContent = response.official ?? "—";
+        
+        // Show stream path
+        if (response.streamPath) {
+          streamPathEl.textContent = response.streamPath.replace('/', '') || "—";
+        } else {
+          streamPathEl.textContent = "—";
+        }
+        
         if (response.official && response.real) {
           const percent = ((response.real / response.official) * 100).toFixed(1);
           ratioEl.textContent = `${percent}%`;
         } else {
           ratioEl.textContent = "—";
+        }
+        
+        // Add visual indicator if this stream has previous data
+        if (response.hasPreviousData && response.real > 0) {
+          realCountEl.style.color = "#00ff00";
+          realCountEl.title = "Restored from previous session";
+        } else {
+          realCountEl.style.color = "";
+          realCountEl.title = "";
         }
       });
     });
@@ -71,6 +91,51 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Refresh button event listener
   refreshBtn.addEventListener("click", refreshData);
+
+  // Save button event listener
+  saveBtn.addEventListener("click", () => {
+    if (!browserAPI) return;
+    
+    browserAPI.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      if (!tabs[0]) return;
+      
+      browserAPI.tabs.sendMessage(tabs[0].id, { type: "SAVE_CURRENT_DATA" }, (response) => {
+        if (response && response.success) {
+          saveBtn.textContent = `✅ Saved ${response.saved}`;
+          setTimeout(() => {
+            saveBtn.textContent = "💾 Save Data";
+          }, 2000);
+        } else {
+          saveBtn.textContent = "❌ No Data";
+          setTimeout(() => {
+            saveBtn.textContent = "💾 Save Data";
+          }, 2000);
+        }
+      });
+    });
+  });
+
+  // Clear all data button
+  clearBtn.addEventListener("click", () => {
+    if (!browserAPI) return;
+    
+    if (confirm("Clear all saved stream data? This cannot be undone.")) {
+      browserAPI.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+        if (!tabs[0]) return;
+        
+        browserAPI.tabs.sendMessage(tabs[0].id, { type: "CLEAR_STREAM_DATA" }, (response) => {
+          if (response && response.success) {
+            clearBtn.textContent = "✅ Cleared";
+            setTimeout(() => {
+              clearBtn.textContent = "🗑️ Clear All Data";
+            }, 2000);
+            // Refresh data to show cleared state
+            setTimeout(refreshData, 500);
+          }
+        });
+      });
+    }
+  });
 
   resetBtn.addEventListener("click", () => {
     if (!browserAPI) {
