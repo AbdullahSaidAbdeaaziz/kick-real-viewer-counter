@@ -1,0 +1,96 @@
+# Kick Real Chat Viewers - .gitignore
+
+# Build outputs and distribution packages
+builds/
+dist/
+*.zip
+*.crx
+*.xpi
+
+# Development and testing
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# IDE and Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# Browser extension development
+web-ext-artifacts/
+.web-extension-id
+
+# Temporary files
+*.tmp
+*.temp
+.cache/
+.temp/
+
+# Logs
+logs/
+*.log
+
+# Coverage and testing
+coverage/
+.nyc_output
+.coverage
+
+# Package managers
+package-lock.json
+yarn.lock
+
+# Backup files
+*.bak
+*.backup
+*~
+
+# Build exclude file (used by build.bat)
+build-exclude.txt
+
+# Git specific
+.git/
+.gitattributes
+
+# Documentation drafts
+docs/drafts/
+*.draft.md
+
+# Personal notes and TODO files
+TODO.txt
+NOTES.txt
+personal-notes/
+
+# Extension store assets (if any)
+store-assets/screenshots/
+store-assets/promotional/
+
+# Development database files
+*.db
+*.sqlite
+*.sqlite3
+
+# Sensitive configuration files
+config.local.js
+secrets.json
+.env.*

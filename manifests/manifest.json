@@ -6,25 +6,25 @@
   "permissions": ["tabs", "scripting", "activeTab", "storage"],
   "host_permissions": ["https://kick.com/*"],
   "action": {
-    "default_popup": "src/popup.html",
+    "default_popup": "popup.html",
     "default_icon": {
-      "16": "assets/icon.png",
-      "32": "assets/icon.png",
-      "48": "assets/icon.png",
-      "128": "assets/icon.png"
+      "16": "icon.png",
+      "32": "icon.png",
+      "48": "icon.png",
+      "128": "icon.png"
     }
   },
   "content_scripts": [
     {
       "matches": ["https://kick.com/*"],
-      "js": ["src/content.js"],
+      "js": ["content.js"],
       "run_at": "document_idle"
     }
   ],
   "icons": {
-    "16": "assets/icon.png",
-    "32": "assets/icon.png",
-    "48": "assets/icon.png",
-    "128": "assets/icon.png"
+    "16": "icon.png",
+    "32": "icon.png",
+    "48": "icon.png",
+    "128": "icon.png"
   }
 }
