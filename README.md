@@ -268,5 +268,3 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 Made with ❤️ for the Kick.com community
 
 </div>
-
-MIT License. Free to use, modify, and improve.
