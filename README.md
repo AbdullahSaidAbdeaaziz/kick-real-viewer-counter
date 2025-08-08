@@ -6,7 +6,27 @@
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Browser Support](https://img.shields.io/badge/browsers-Chrome%20%7C%20Firefox%20%7C%20Edge%20%7C%20Brave%20%7C%20Opera-brightgreen.svg)]()
 
-## 📖 Overview
+## � Table of Contents
+
+- [📖 Overview](#-overview)
+- [✨ Features](#-features)
+- [🚀 Quick Start](#-quick-start)
+  - [Option 1: Use Build Scripts (Recommended)](#option-1-use-build-scripts-recommended)
+  - [Option 2: Manual Installation (Advanced Users)](#option-2-manual-installation-advanced-users)
+  - [Usage](#usage)
+  - [Why Use the Build Scripts?](#why-use-the-build-scripts-)
+- [🎮 How It Works](#-how-it-works)
+- [📁 Project Structure](#-project-structure)
+- [🔧 Advanced Usage](#-advanced-usage)
+- [📊 Technical Details](#-technical-details)
+- [🤝 Contributing](#-contributing)
+- [📄 License](#-license)
+- [👨‍💻 Author](#-author)
+- [🔗 Links](#-links)
+
+---
+
+## �📖 Overview
 
 **Kick Real Chat Viewers** is a cross-browser extension that provides **accurate engagement metrics** by counting unique users who actively chat during Kick.com livestreams. Unlike the official viewer count, this tool shows you how many people are actually participating in the conversation.
 
